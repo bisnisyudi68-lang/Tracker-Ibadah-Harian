@@ -3,67 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ramadhan PRO</title>
+<title>Muslim Pro Lite</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
+  font-family:Arial, Helvetica, sans-serif;
   background:linear-gradient(135deg,#0f172a,#1e293b);
   color:white;
+}
+
+header{
+  padding:25px;
   text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
 }
 
-.hero{
-  padding:60px 20px;
+.container{
+  padding:30px 20px;
+  max-width:600px;
+  margin:auto;
 }
 
-h1{
-  font-size:34px;
+.card{
+  background:#1e293b;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  transition:0.3s;
 }
 
-p{
-  opacity:0.8;
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.card h3{
+  margin-top:0;
 }
 
 .btn{
   display:inline-block;
-  margin-top:30px;
-  padding:15px 30px;
+  margin-top:10px;
+  padding:10px 18px;
   background:#22c55e;
   color:white;
   text-decoration:none;
-  border-radius:12px;
-  font-size:18px;
+  border-radius:10px;
   font-weight:bold;
 }
 
-.btn:hover{
-  background:#16a34a;
-}
-
-.footer{
-  margin-top:60px;
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
   opacity:0.6;
-  font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-  <h1>🌙 Ramadhan Tracker PRO</h1>
-  <p>Bangun Istiqomah 30 Hari Ramadhan</p>
+<header>
+🕌 Muslim Pro Lite
+</header>
 
-  <a href="ramadhan-pro.html" class="btn">
-    Masuk Aplikasi
-  </a>
+<div class="container">
+
+<div class="card">
+<h3>🕰 Jadwal Sholat</h3>
+<p>Lihat waktu sholat otomatis berdasarkan kota.</p>
+<a href="jadwal.html" class="btn">Buka</a>
 </div>
 
-<div class="footer">
-  © 2026 Ramadhan PRO
+<div class="card">
+<h3>📿 Tracker Sholat</h3>
+<p>Checklist sholat harian + streak.</p>
+<a href="tracker.html" class="btn">Buka</a>
 </div>
+
+<div class="card">
+<h3>📖 Al-Qur'an</h3>
+<p>Baca surat dan terjemahan.</p>
+<a href="quran.html" class="btn">Buka</a>
+</div>
+
+<div class="card">
+<h3>📿 Dzikir Counter</h3>
+<p>Tasbih digital dengan target.</p>
+<a href="dzikir.html" class="btn">Buka</a>
+</div>
+
+</div>
+
+<footer>
+© 2026 Muslim Pro Lite
+</footer>
 
 </body>
 </html>
