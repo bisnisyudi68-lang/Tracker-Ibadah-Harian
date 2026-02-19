@@ -91,57 +91,86 @@ Muslim Pro Lite © 2026
 
 <script>
 
-let qibla = 0;
+let qiblaDirection = 0;
 
+// Koordinat Ka'bah
 const kaabaLat = 21.4225;
-const kaabaLng = 39.8262;
+const kaabaLon = 39.8262;
 
-function toRadians(deg){
-  return deg * Math.PI / 180;
-}
+// Hitung arah kiblat dari lokasi user
+function calculateQibla(lat, lon){
+  const toRad = deg => deg * Math.PI/180;
+  const toDeg = rad => rad * 180/Math.PI;
 
-function toDegrees(rad){
-  return rad * 180 / Math.PI;
-}
-
-function getQiblaDirection(lat, lng){
-  const dLon = toRadians(kaabaLng - lng);
-
-  lat = toRadians(lat);
-  const kaabaLatRad = toRadians(kaabaLat);
+  const dLon = toRad(kaabaLon - lon);
 
   const y = Math.sin(dLon);
-  const x = Math.cos(lat) * Math.tan(kaabaLatRad) -
-            Math.sin(lat) * Math.cos(dLon);
+  const x = Math.cos(toRad(lat))*Math.tan(toRad(kaabaLat)) -
+            Math.sin(toRad(lat))*Math.cos(dLon);
 
-  const bearing = Math.atan2(y, x);
-  return (toDegrees(bearing) + 360) % 360;
+  let brng = toDeg(Math.atan2(y, x));
+  return (brng + 360) % 360;
 }
 
-function aktifkanGPS(){
-  navigator.geolocation.getCurrentPosition(position=>{
-    const userLat = position.coords.latitude;
-    const userLng = position.coords.longitude;
-
-    qibla = getQiblaDirection(userLat, userLng);
-
-    document.getElementById("angleText").innerText =
-      Math.round(qibla) + "°";
-  });
+// Ambil lokasi user
+function initLocation(){
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      qiblaDirection = calculateQibla(
+        pos.coords.latitude,
+        pos.coords.longitude
+      );
+    },
+    err=>{
+      alert("GPS tidak aktif");
+    }
+  );
 }
 
-window.addEventListener("deviceorientationabsolute", function(event){
-  let heading = event.alpha;
-  if(heading !== null){
-    document.getElementById("needle").style.transform =
-      "rotate(" + (qibla - heading) + "deg)";
+// Aktifkan kompas
+function initCompass(){
+
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+
+    DeviceOrientationEvent.requestPermission()
+    .then(response=>{
+      if(response === "granted"){
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    });
+
+  } else {
+    window.addEventListener("deviceorientationabsolute", handleOrientation);
+    window.addEventListener("deviceorientation", handleOrientation);
   }
-});
+}
+
+function handleOrientation(event){
+
+  let heading;
+
+  if(event.absolute === true || event.alpha !== null){
+    heading = event.alpha;
+  } else {
+    return;
+  }
+
+  const rotate = qiblaDirection - heading;
+
+  document.getElementById("needle").style.transform =
+    "rotate(" + rotate + "deg)";
+
+  document.getElementById("degree").innerText =
+    Math.round(heading) + "°";
+}
+
+// Tombol GPS
+function startQibla(){
+  initLocation();
+  initCompass();
+}
 
 </script>
-
-</body>
-</html>
-
 </body>
 </html>
