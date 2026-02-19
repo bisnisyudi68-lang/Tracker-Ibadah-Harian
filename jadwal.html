@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal Sholat</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  text-align:center;
+}
+
+header{
+  padding:20px;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
+}
+
+.container{
+  max-width:500px;
+  margin:30px auto;
+  padding:20px;
+}
+
+select, button{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin:10px 0;
+}
+
+button{
+  background:#22c55e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  margin-top:20px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  text-align:left;
+}
+
+.time{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.footer{
+  margin-top:40px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>🕰 Jadwal Sholat</header>
+
+<div class="container">
+
+<select id="city">
+  <option value="Jakarta">Jakarta</option>
+  <option value="Bandung">Bandung</option>
+  <option value="Surabaya">Surabaya</option>
+  <option value="Yogyakarta">Yogyakarta</option>
+  <option value="Medan">Medan</option>
+</select>
+
+<br>
+
+<button onclick="getPrayer()">Tampilkan Jadwal</button>
+
+<div id="result"></div>
+
+</div>
+
+<div class="footer">
+Muslim Pro Lite © 2026
+</div>
+
+<script>
+
+function getPrayer(){
+
+  const city = document.getElementById("city").value;
+  const today = new Date();
+  const date = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+
+  fetch(`https://api.aladhan.com/v1/timingsByCity/${date}?city=${city}&country=Indonesia&method=11`)
+  .then(res=>res.json())
+  .then(data=>{
+    
+    const t = data.data.timings;
+
+    document.getElementById("result").innerHTML = `
+      <div class="card">
+        <div class="time"><span>Subuh</span><span>${t.Fajr}</span></div>
+        <div class="time"><span>Dzuhur</span><span>${t.Dhuhr}</span></div>
+        <div class="time"><span>Ashar</span><span>${t.Asr}</span></div>
+        <div class="time"><span>Maghrib</span><span>${t.Maghrib}</span></div>
+        <div class="time"><span>Isya</span><span>${t.Isha}</span></div>
+      </div>
+    `;
+  });
+
+}
+
+</script>
+
+</body>
+</html>
