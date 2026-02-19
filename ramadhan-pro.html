@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramadhan Tracker PRO</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  text-align:center;
+}
+
+.container{
+  max-width:500px;
+  margin:40px auto;
+  background:#1e293b;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+h1{
+  font-size:30px;
+}
+
+.prayer{
+  display:flex;
+  justify-content:space-between;
+  margin:15px 0;
+  font-size:18px;
+}
+
+button{
+  margin-top:20px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.stats{
+  margin-top:25px;
+  font-size:14px;
+  opacity:0.9;
+}
+
+.calendar{
+  margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:8px;
+}
+
+.day{
+  padding:10px;
+  border-radius:8px;
+  font-size:12px;
+}
+
+.full{ background:#16a34a; }
+.partial{ background:#eab308; }
+.empty{ background:#334155; }
+
+.footer{
+  margin-top:30px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌙 Ramadhan Tracker PRO</h1>
+
+<div id="prayers"></div>
+
+<button onclick="saveDay()">Simpan Hari Ini</button>
+
+<div class="stats" id="stats"></div>
+
+<div class="calendar" id="calendar"></div>
+
+<div class="footer">
+Premium Version © 2026
+</div>
+
+</div>
+
+<script>
+
+const prayerNames = ["Subuh","Dzuhur","Ashar","Maghrib","Isya"];
+const prayersDiv = document.getElementById("prayers");
+const calendarDiv = document.getElementById("calendar");
+
+let ramadhanData = JSON.parse(localStorage.getItem("ramadhanData")) || {};
+
+function renderPrayers(){
+  prayersDiv.innerHTML="";
+  prayerNames.forEach(p=>{
+    prayersDiv.innerHTML += `
+      <div class="prayer">
+        ${p}
+        <input type="checkbox" id="${p}">
+      </div>
+    `;
+  });
+}
+
+function saveDay(){
+  let today = new Date().getDate();
+  let count = 0;
+  
+  prayerNames.forEach(p=>{
+    if(document.getElementById(p).checked) count++;
+  });
+
+  ramadhanData[today] = count;
+  localStorage.setItem("ramadhanData",JSON.stringify(ramadhanData));
+  
+  renderCalendar();
+  renderStats();
+}
+
+function renderCalendar(){
+  calendarDiv.innerHTML="";
+  for(let i=1;i<=30;i++){
+    let status="empty";
+    if(ramadhanData[i]==5) status="full";
+    else if(ramadhanData[i]>0) status="partial";
+
+    calendarDiv.innerHTML += `
+      <div class="day ${status}">
+        ${i}
+      </div>
+    `;
+  }
+}
+
+function renderStats(){
+  let total=0;
+  let fullDays=0;
+
+  for(let day in ramadhanData){
+    total += ramadhanData[day];
+    if(ramadhanData[day]==5) fullDays++;
+  }
+
+  let percent = Math.round((total/(30*5))*100);
+
+  document.getElementById("stats").innerHTML = `
+    Total Sholat: ${total} <br>
+    Hari Full: ${fullDays} <br>
+    Konsistensi: ${percent}%
+  `;
+}
+
+renderPrayers();
+renderCalendar();
+renderStats();
+
+</script>
+
+</body>
+</html>
