@@ -3,95 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barzanji</title>
+<title>Barzanji + Audio</title>
 
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    color:white;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
 }
 
 header{
-    padding:20px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-    background:#111827;
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
 }
 
 .container{
-    max-width:700px;
-    margin:20px auto;
-    padding:20px;
+  max-width:700px;
+  margin:20px auto;
+  padding:20px;
 }
 
-.audio-box{
-    margin-top:15px;
-}
-
-.box{
-    background:#1e293b;
-    padding:15px;
-    margin-top:20px;
-    border-radius:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.4);
+.section{
+  background:#1e293b;
+  padding:15px;
+  margin-bottom:20px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
 
 .arab{
-    font-size:22px;
-    text-align:right;
-    margin-bottom:10px;
+  font-size:22px;
+  text-align:right;
+  margin-bottom:10px;
+  line-height:1.8;
 }
 
-.arti{
-    font-size:14px;
-    opacity:0.85;
+.translation{
+  font-size:14px;
+  opacity:0.85;
+  margin-bottom:10px;
 }
 
-button{
-    background:#22c55e;
-    color:white;
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
+audio{
+  width:100%;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>📖 Barzanji + Audio</header>
+<header>📖 Maulid Al-Barzanji + Audio</header>
 
 <div class="container">
 
-<button onclick="playAudio()">▶ Play Audio</button>
-
-<div class="audio-box">
-<audio id="audio" controls style="width:100%; margin-top:15px;">
-<source src="https://example.com/barzanji.mp3" type="audio/mp3">
+<div class="section">
+<div class="arab">
+الْحَمْدُ لِلّٰهِ الْقَوِيِّ سُلْطَانُهُ<br>
+الْوَاضِحِ بُرْهَانُهُ
+</div>
+<div class="translation">
+Segala puji bagi Allah Yang Maha Kuat kekuasaan-Nya dan jelas bukti-Nya.
+</div>
+<audio controls>
+<source src="https://ia800905.us.archive.org/5/items/maulid-barzanji/maulid-barzanji.mp3" type="audio/mp3">
 </audio>
 </div>
 
-<div class="box">
+<div class="section">
 <div class="arab">
-اللهم صل وسلم على سيدنا محمد
+أُوصِيكُمْ وَنَفْسِي بِتَقْوَى اللّٰهِ
 </div>
-<div class="arti">
-Ya Allah limpahkan sholawat dan salam kepada Nabi Muhammad.
+<div class="translation">
+Aku wasiatkan kepada kalian dan diriku untuk selalu bertakwa kepada Allah.
 </div>
+<audio controls>
+<source src="https://ia800905.us.archive.org/5/items/maulid-barzanji/maulid-barzanji.mp3" type="audio/mp3">
+</audio>
+</div>
+
+<div class="section">
+<div class="arab">
+وُلِدَ صَلَّى اللّٰهُ عَلَيْهِ وَسَلَّمَ يَوْمَ الاثْنَيْنِ
+</div>
+<div class="translation">
+Beliau ﷺ dilahirkan pada hari Senin.
+</div>
+<audio controls>
+<source src="https://ia800905.us.archive.org/5/items/maulid-barzanji/maulid-barzanji.mp3" type="audio/mp3">
+</audio>
 </div>
 
 </div>
-
-<script>
-function playAudio(){
-document.getElementById("audio").play();
-}
-</script>
 
 </body>
 </html>
