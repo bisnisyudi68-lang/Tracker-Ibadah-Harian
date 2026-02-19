@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murotal Juz 30</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+}
+
+header{
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
+}
+
+.container{
+  max-width:700px;
+  margin:20px auto;
+  padding:15px;
+}
+
+select,button{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin:5px 0;
+}
+
+button{
+  background:#22c55e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+audio{
+  width:100%;
+  margin:15px 0;
+}
+
+.ayah{
+  background:#1e293b;
+  padding:15px;
+  margin:15px 0;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
+}
+
+.arab{
+  font-size:22px;
+  text-align:right;
+  line-height:1.8;
+}
+
+.translation{
+  font-size:14px;
+  opacity:0.85;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎧 Murotal Juz 30</header>
+
+<div class="container">
+
+<select id="surahSelect"></select>
+<br>
+<button onclick="loadSurah()">Putar & Tampilkan</button>
+
+<div id="audioBox"></div>
+<div id="content"></div>
+
+</div>
+
+<script>
+
+// Daftar surat Juz 30 (78-114)
+const juz30 = [
+78,79,80,81,82,83,84,85,86,87,
+88,89,90,91,92,93,94,95,96,97,
+98,99,100,101,102,103,104,105,106,107,
+108,109,110,111,112,113,114
+];
+
+fetch("https://api.alquran.cloud/v1/surah")
+.then(res=>res.json())
+.then(data=>{
+let list=data.data;
+let select=document.getElementById("surahSelect");
+
+juz30.forEach(num=>{
+let s=list.find(x=>x.number===num);
+select.innerHTML+=`
+<option value="${s.number}">
+${s.number}. ${s.englishName}
+</option>`;
+});
+});
+
+function loadSurah(){
+
+let surahNumber=document.getElementById("surahSelect").value;
+
+document.getElementById("content").innerHTML="Memuat...";
+
+// Audio Mishary Alafasy
+document.getElementById("audioBox").innerHTML=`
+<audio controls autoplay>
+<source src="https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3" type="audio/mpeg">
+</audio>
+`;
+
+Promise.all([
+fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/quran-uthmani`),
+fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`)
+])
+.then(responses=>Promise.all(responses.map(r=>r.json())))
+.then(data=>{
+
+let arab=data[0].data.ayahs;
+let indo=data[1].data.ayahs;
+
+let html="";
+
+for(let i=0;i<arab.length;i++){
+html+=`
+<div class="ayah">
+<div class="arab">${arab[i].text}</div>
+<div class="translation">${indo[i].text}</div>
+</div>`;
+}
+
+document.getElementById("content").innerHTML=html;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
