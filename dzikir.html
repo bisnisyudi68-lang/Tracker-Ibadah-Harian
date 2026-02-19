@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dzikir Counter</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  text-align:center;
+}
+
+header{
+  padding:20px;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
+}
+
+.container{
+  max-width:400px;
+  margin:40px auto;
+  padding:20px;
+}
+
+.counter-box{
+  background:#1e293b;
+  padding:40px 20px;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.5);
+}
+
+.number{
+  font-size:60px;
+  font-weight:bold;
+  margin:20px 0;
+}
+
+button{
+  padding:12px 25px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:10px 5px;
+}
+
+.add{
+  background:#22c55e;
+  color:white;
+}
+
+.reset{
+  background:#ef4444;
+  color:white;
+}
+
+select{
+  padding:8px;
+  border-radius:8px;
+  margin-top:15px;
+}
+
+.footer{
+  margin-top:40px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>📿 Dzikir Counter</header>
+
+<div class="container">
+
+<div class="counter-box">
+
+<select id="target">
+  <option value="33">Target 33</option>
+  <option value="100">Target 100</option>
+  <option value="500">Target 500</option>
+</select>
+
+<div class="number" id="count">0</div>
+
+<button class="add" onclick="add()">Tambah</button>
+<button class="reset" onclick="reset()">Reset</button>
+
+</div>
+
+</div>
+
+<div class="footer">
+Muslim Pro Lite © 2026
+</div>
+
+<script>
+
+let count = localStorage.getItem("dzikirCount") || 0;
+document.getElementById("count").innerText = count;
+
+function add(){
+  count++;
+  localStorage.setItem("dzikirCount",count);
+  document.getElementById("count").innerText = count;
+
+  let target = document.getElementById("target").value;
+  if(count == target){
+    alert("🎉 Target Tercapai!");
+  }
+}
+
+function reset(){
+  count = 0;
+  localStorage.setItem("dzikirCount",count);
+  document.getElementById("count").innerText = count;
+}
+
+</script>
+
+</body>
+</html>
