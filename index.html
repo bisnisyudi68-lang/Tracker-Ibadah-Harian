@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramadhan Pro - Tracker Sholat</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#111827);
+  color:white;
+  text-align:center;
+}
+
+.container{
+  max-width:500px;
+  margin:auto;
+  padding:30px 20px;
+}
+
+h1{
+  margin-bottom:5px;
+  font-size:26px;
+}
+
+.sub{
+  font-size:14px;
+  opacity:0.7;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#1e293b;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 0 25px rgba(0,0,0,0.4);
+}
+
+.sholat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  font-size:18px;
+}
+
+input[type=checkbox]{
+  width:22px;
+  height:22px;
+}
+
+.progress{
+  margin-top:20px;
+  font-size:15px;
+}
+
+.bar{
+  height:10px;
+  background:#334155;
+  border-radius:10px;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.bar-fill{
+  height:100%;
+  background:#22c55e;
+  width:0%;
+  transition:0.3s;
+}
+
+.streak{
+  margin-top:20px;
+  font-size:14px;
+  color:#22c55e;
+  font-weight:bold;
+}
+
+.footer{
+  margin-top:40px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌙 Tracker Sholat</h1>
+<div class="sub">Bangun Istiqomah 30 Hari Ramadhan</div>
+
+<div class="card">
+
+<div class="sholat">
+Subuh
+<input type="checkbox" id="subuh">
+</div>
+
+<div class="sholat">
+Dzuhur
+<input type="checkbox" id="dzuhur">
+</div>
+
+<div class="sholat">
+Ashar
+<input type="checkbox" id="ashar">
+</div>
+
+<div class="sholat">
+Maghrib
+<input type="checkbox" id="maghrib">
+</div>
+
+<div class="sholat">
+Isya
+<input type="checkbox" id="isya">
+</div>
+
+<div class="progress">
+Progress Hari Ini
+<div class="bar">
+<div class="bar-fill" id="bar"></div>
+</div>
+</div>
+
+<div class="streak" id="streak">
+🔥 Streak: 0 Hari Full
+</div>
+
+</div>
+
+<div class="footer">
+Ramadhan Pro © 2026
+</div>
+
+</div>
+
+<script>
+
+const today = new Date().toDateString();
+let data = JSON.parse(localStorage.getItem("sholatData")) || {};
+
+if(!data[today]){
+  data[today] = {
+    subuh:false,
+    dzuhur:false,
+    ashar:false,
+    maghrib:false,
+    isya:false
+  };
+}
+
+const prayers = ["subuh","dzuhur","ashar","maghrib","isya"];
+
+prayers.forEach(p=>{
+  const cb = document.getElementById(p);
+  cb.checked = data[today][p];
+  cb.addEventListener("change",()=>{
+    data[today][p] = cb.checked;
+    localStorage.setItem("sholatData",JSON.stringify(data));
+    update();
+  });
+});
+
+function update(){
+  let total = 0;
+  prayers.forEach(p=>{
+    if(data[today][p]) total++;
+  });
+
+  let percent = (total/5)*100;
+  document.getElementById("bar").style.width = percent+"%";
+
+  // Hitung streak
+  let streak = 0;
+  let dates = Object.keys(data).sort().reverse();
+
+  for(let d of dates){
+    let full = prayers.every(p=>data[d][p]);
+    if(full) streak++;
+    else break;
+  }
+
+  document.getElementById("streak").innerText =
+    "🔥 Streak: "+streak+" Hari Full";
+}
+
+update();
+
+</script>
+
+</body>
+</html>
