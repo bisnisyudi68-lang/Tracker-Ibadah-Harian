@@ -87,52 +87,47 @@ button{
 <div class="footer">
 Muslim Pro Lite © 2026
 </div>
-
+window.addEventListener("deviceorientationabsolute", function(event) {
+  let heading = event.alpha;
+  document.getElementById("needle").style.transform =
+    "rotate(" + (qibla - heading) + "deg)";
+});
 <script>
-
-// Koordinat Ka'bah
 const kaabaLat = 21.4225;
 const kaabaLng = 39.8262;
 
 function toRadians(deg){
-  return deg * Math.PI/180;
+  return deg * Math.PI / 180;
 }
 
 function toDegrees(rad){
-  return rad * 180/Math.PI;
+  return rad * 180 / Math.PI;
 }
 
-function calculateQibla(lat,lng){
-  const φ1 = toRadians(lat);
-  const φ2 = toRadians(kaabaLat);
-  const Δλ = toRadians(kaabaLng - lng);
+function getQiblaDirection(lat, lng){
+  const dLon = toRadians(kaabaLng - lng);
 
-  const y = Math.sin(Δλ);
-  const x = Math.cos(φ1)*Math.tan(φ2) - Math.sin(φ1)*Math.cos(Δλ);
-  let θ = Math.atan2(y,x);
+  lat = toRadians(lat);
+  const kaabaLatRad = toRadians(kaabaLat);
 
-  return (toDegrees(θ)+360)%360;
+  const y = Math.sin(dLon);
+  const x = Math.cos(lat) * Math.tan(kaabaLatRad) -
+            Math.sin(lat) * Math.cos(dLon);
+
+  const bearing = Math.atan2(y, x);
+  return (toDegrees(bearing) + 360) % 360;
 }
 
-function getLocation(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(position=>{
-      let lat = position.coords.latitude;
-      let lng = position.coords.longitude;
+navigator.geolocation.getCurrentPosition(position=>{
+  const userLat = position.coords.latitude;
+  const userLng = position.coords.longitude;
 
-      let qibla = calculateQibla(lat,lng);
+  const qibla = getQiblaDirection(userLat, userLng);
 
-      document.getElementById("degree").innerText =
-        "Arah Kiblat: "+Math.round(qibla)+"°";
+  document.getElementById("angleText").innerText =
+    "Arah Kiblat: " + Math.round(qibla) + "°";
 
-      document.getElementById("arrow").style.transform =
-        `translateX(-50%) rotate(${qibla}deg)`;
-    });
-  }else{
-    alert("GPS tidak didukung");
-  }
-}
-
+});
 </script>
 
 </body>
