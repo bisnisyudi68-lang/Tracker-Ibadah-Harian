@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al-Qur'an Digital</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+}
+
+header{
+  padding:20px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  background:#111827;
+}
+
+.container{
+  max-width:700px;
+  margin:20px auto;
+  padding:20px;
+}
+
+select, button{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin:10px 5px;
+}
+
+button{
+  background:#22c55e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.ayah{
+  background:#1e293b;
+  padding:15px;
+  margin:15px 0;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
+}
+
+.arab{
+  font-size:22px;
+  text-align:right;
+  margin-bottom:10px;
+}
+
+.translation{
+  font-size:14px;
+  opacity:0.85;
+}
+
+.loading{
+  text-align:center;
+  margin-top:20px;
+  opacity:0.7;
+}
+
+.footer{
+  text-align:center;
+  margin-top:30px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>📖 Al-Qur'an Digital</header>
+
+<div class="container">
+
+<select id="surahSelect"></select>
+<button onclick="loadSurah()">Tampilkan</button>
+
+<div id="content"></div>
+
+</div>
+
+<div class="footer">
+Muslim Pro Lite © 2026
+</div>
+
+<script>
+
+// Load daftar surat
+fetch("https://api.alquran.cloud/v1/surah")
+.then(res=>res.json())
+.then(data=>{
+  let list = data.data;
+  let select = document.getElementById("surahSelect");
+  list.forEach(s=>{
+    select.innerHTML += `<option value="${s.number}">
+      ${s.number}. ${s.englishName}
+    </option>`;
+  });
+});
+
+// Load isi surat
+function loadSurah(){
+  let surahNumber = document.getElementById("surahSelect").value;
+  document.getElementById("content").innerHTML =
+    "<div class='loading'>Memuat...</div>";
+
+  Promise.all([
+    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/quran-uthmani`),
+    fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/id.indonesian`)
+  ])
+  .then(responses => Promise.all(responses.map(r=>r.json())))
+  .then(data=>{
+    let arab = data[0].data.ayahs;
+    let indo = data[1].data.ayahs;
+
+    let html="";
+    for(let i=0;i<arab.length;i++){
+      html += `
+        <div class="ayah">
+          <div class="arab">${arab[i].text}</div>
+          <div class="translation">${indo[i].text}</div>
+        </div>
+      `;
+    }
+
+    document.getElementById("content").innerHTML = html;
+  });
+}
+
+</script>
+
+</body>
+</html>
