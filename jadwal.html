@@ -67,32 +67,42 @@ Muslim Pro Lite © 2026
 </div>
 
 <script>
-// Kita pakai API Aladhan, dengan kota Majalengka
-const city = "Majalengka";
-const country = "Indonesia";
 
-const today = new Date();
-const date = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+function getPrayerTimes(lat, lon){
+  const today = new Date();
+  const date = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
 
-fetch(`https://api.aladhan.com/v1/timingsByCity/${date}?city=${city}&country=${country}&method=11`)
-.then(res => res.json())
-.then(data => {
-  const t = data.data.timings;
+  fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lon}&method=11`)
+  .then(res => res.json())
+  .then(data => {
+    const t = data.data.timings;
 
-  document.getElementById("result").innerHTML = `
-    <div class="card">
-      <div class="time"><span>Subuh</span><span>${t.Fajr}</span></div>
-      <div class="time"><span>Dzuhur</span><span>${t.Dhuhr}</span></div>
-      <div class="time"><span>Ashar</span><span>${t.Asr}</span></div>
-      <div class="time"><span>Maghrib</span><span>${t.Maghrib}</span></div>
-      <div class="time"><span>Isya</span><span>${t.Isha}</span></div>
-    </div>
-  `;
-})
-.catch(err => {
-  document.getElementById("result").innerHTML =
-    "<p>Tidak bisa mengambil jadwal sekarang</p>";
-});
+    document.getElementById("result").innerHTML = `
+      <div class="card">
+        <div class="time"><span>Subuh</span><span>${t.Fajr}</span></div>
+        <div class="time"><span>Dzuhur</span><span>${t.Dhuhr}</span></div>
+        <div class="time"><span>Ashar</span><span>${t.Asr}</span></div>
+        <div class="time"><span>Maghrib</span><span>${t.Maghrib}</span></div>
+        <div class="time"><span>Isya</span><span>${t.Isha}</span></div>
+      </div>
+    `;
+  });
+}
+
+// Coba ambil GPS
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(
+    (position)=>{
+      getPrayerTimes(position.coords.latitude, position.coords.longitude);
+    },
+    ()=>{
+      // Jika gagal, default Majalengka
+      getPrayerTimes(-6.83,108.23);
+    }
+  );
+}else{
+  getPrayerTimes(-6.83,108.23);
+}
 
 </script>
 
