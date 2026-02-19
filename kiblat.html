@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arah Kiblat</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  text-align:center;
+}
+
+header{
+  padding:20px;
+  font-size:22px;
+  font-weight:bold;
+  background:#111827;
+}
+
+.container{
+  margin-top:40px;
+}
+
+.compass{
+  width:250px;
+  height:250px;
+  border:8px solid #22c55e;
+  border-radius:50%;
+  margin:30px auto;
+  position:relative;
+}
+
+.arrow{
+  width:4px;
+  height:110px;
+  background:red;
+  position:absolute;
+  top:15px;
+  left:50%;
+  transform-origin:bottom center;
+  transform:translateX(-50%) rotate(0deg);
+}
+
+.degree{
+  font-size:18px;
+  margin-top:15px;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.footer{
+  margin-top:40px;
+  font-size:12px;
+  opacity:0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>🧭 Arah Kiblat</header>
+
+<div class="container">
+
+<button onclick="getLocation()">Aktifkan GPS</button>
+
+<div class="compass">
+  <div class="arrow" id="arrow"></div>
+</div>
+
+<div class="degree" id="degree">0°</div>
+
+</div>
+
+<div class="footer">
+Muslim Pro Lite © 2026
+</div>
+
+<script>
+
+// Koordinat Ka'bah
+const kaabaLat = 21.4225;
+const kaabaLng = 39.8262;
+
+function toRadians(deg){
+  return deg * Math.PI/180;
+}
+
+function toDegrees(rad){
+  return rad * 180/Math.PI;
+}
+
+function calculateQibla(lat,lng){
+  const φ1 = toRadians(lat);
+  const φ2 = toRadians(kaabaLat);
+  const Δλ = toRadians(kaabaLng - lng);
+
+  const y = Math.sin(Δλ);
+  const x = Math.cos(φ1)*Math.tan(φ2) - Math.sin(φ1)*Math.cos(Δλ);
+  let θ = Math.atan2(y,x);
+
+  return (toDegrees(θ)+360)%360;
+}
+
+function getLocation(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(position=>{
+      let lat = position.coords.latitude;
+      let lng = position.coords.longitude;
+
+      let qibla = calculateQibla(lat,lng);
+
+      document.getElementById("degree").innerText =
+        "Arah Kiblat: "+Math.round(qibla)+"°";
+
+      document.getElementById("arrow").style.transform =
+        `translateX(-50%) rotate(${qibla}deg)`;
+    });
+  }else{
+    alert("GPS tidak didukung");
+  }
+}
+
+</script>
+
+</body>
+</html>
