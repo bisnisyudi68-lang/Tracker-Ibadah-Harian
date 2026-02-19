@@ -87,12 +87,12 @@ button{
 <div class="footer">
 Muslim Pro Lite © 2026
 </div>
-window.addEventListener("deviceorientationabsolute", function(event) {
-  let heading = event.alpha;
-  document.getElementById("needle").style.transform =
-    "rotate(" + (qibla - heading) + "deg)";
-});
+<!-- TARUH DI PALING BAWAH SEBELUM </body> -->
+
 <script>
+
+let qibla = 0;
+
 const kaabaLat = 21.4225;
 const kaabaLng = 39.8262;
 
@@ -118,17 +118,30 @@ function getQiblaDirection(lat, lng){
   return (toDegrees(bearing) + 360) % 360;
 }
 
-navigator.geolocation.getCurrentPosition(position=>{
-  const userLat = position.coords.latitude;
-  const userLng = position.coords.longitude;
+function aktifkanGPS(){
+  navigator.geolocation.getCurrentPosition(position=>{
+    const userLat = position.coords.latitude;
+    const userLng = position.coords.longitude;
 
-  const qibla = getQiblaDirection(userLat, userLng);
+    qibla = getQiblaDirection(userLat, userLng);
 
-  document.getElementById("angleText").innerText =
-    "Arah Kiblat: " + Math.round(qibla) + "°";
+    document.getElementById("angleText").innerText =
+      Math.round(qibla) + "°";
+  });
+}
 
+window.addEventListener("deviceorientationabsolute", function(event){
+  let heading = event.alpha;
+  if(heading !== null){
+    document.getElementById("needle").style.transform =
+      "rotate(" + (qibla - heading) + "deg)";
+  }
 });
+
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
