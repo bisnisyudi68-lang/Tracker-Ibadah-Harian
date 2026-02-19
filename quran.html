@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Al-Qur'an Digital</title>
+<title>Al-Qur'an Audio</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Arial;
   background:linear-gradient(135deg,#0f172a,#1e293b);
   color:white;
 }
@@ -60,36 +60,32 @@ button{
   opacity:0.85;
 }
 
+.audio-box{
+  margin-top:15px;
+}
+
 .loading{
   text-align:center;
   margin-top:20px;
   opacity:0.7;
 }
 
-.footer{
-  text-align:center;
-  margin-top:30px;
-  font-size:12px;
-  opacity:0.6;
-}
 </style>
 </head>
 
 <body>
 
-<header>📖 Al-Qur'an Digital</header>
+<header>📖 Al-Qur'an + Audio</header>
 
 <div class="container">
 
 <select id="surahSelect"></select>
 <button onclick="loadSurah()">Tampilkan</button>
 
+<div class="audio-box" id="audioBox"></div>
+
 <div id="content"></div>
 
-</div>
-
-<div class="footer">
-Muslim Pro Lite © 2026
 </div>
 
 <script>
@@ -107,11 +103,17 @@ fetch("https://api.alquran.cloud/v1/surah")
   });
 });
 
-// Load isi surat
 function loadSurah(){
   let surahNumber = document.getElementById("surahSelect").value;
   document.getElementById("content").innerHTML =
     "<div class='loading'>Memuat...</div>";
+
+  // Audio full surah (Mishary)
+  document.getElementById("audioBox").innerHTML = `
+    <audio controls style="width:100%; margin-top:15px;">
+      <source src="https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3" type="audio/mp3">
+    </audio>
+  `;
 
   Promise.all([
     fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/quran-uthmani`),
