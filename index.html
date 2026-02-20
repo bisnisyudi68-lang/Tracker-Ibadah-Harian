@@ -11,6 +11,13 @@ body{
   font-family:Arial, sans-serif;
   background:linear-gradient(135deg,#0f172a,#1e293b);
   color:white;
+  transition:0.3s;
+}
+
+/* MODE TERANG */
+.dark-mode{
+  background:#f1f5f9;
+  color:#111827;
 }
 
 /* HEADER */
@@ -21,6 +28,17 @@ header{
   font-weight:bold;
   background:#111827;
   box-shadow:0 4px 15px rgba(0,0,0,0.4);
+  transition:0.5s;
+}
+
+/* BUTTON GLOBAL */
+button{
+  padding:8px 15px;
+  margin:5px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 /* RUNNING TEXT */
@@ -77,6 +95,10 @@ header{
   background:#2563eb;
 }
 
+.menu:active{
+  background:#16a34a;
+}
+
 /* WA BUTTON */
 .wa-btn{
   display:block;
@@ -109,11 +131,19 @@ footer{
 🕌 Muslim Pro Lite
 </header>
 
-<div class="running-text">
-  <span id="runningText">
-  🌐 Selamat Datang di Website A Yudi Thea — Semoga Bermanfaat untuk Kita Semua 🌐
-  </span>
+<div style="text-align:center;margin-top:10px;">
+<button onclick="toggleMode()" id="modeBtn">🌙 Mode Gelap</button>
+<button onclick="aktifkanNotifikasi()">🔔 Notifikasi</button>
+<button onclick="editText()">⚙ Edit Teks</button>
 </div>
+
+<div class="running-text">
+<span id="runningText">
+🌐 Selamat Datang di Website A Yudi Thea — Semoga Bermanfaat untuk Kita Semua 🌐
+</span>
+</div>
+
+<div id="hijriyah" style="text-align:center;margin-top:10px;font-weight:bold;"></div>
 
 <div class="grid">
 
@@ -152,16 +182,8 @@ class="wa-btn">
 </footer>
 
 <script>
-/* PANEL EDIT RUNNING TEXT */
-function buatPanel(){
-  const panel = document.createElement("div");
-  panel.style.position="fixed";
-  panel.style.top="10px";
-  panel.style.right="10px";
-  panel.innerHTML=`<button onclick="editText()" style="padding:8px 15px;background:#ef4444;color:white;border:none;border-radius:8px;">⚙ Edit</button>`;
-  document.body.appendChild(panel);
-}
 
+/* EDIT RUNNING TEXT */
 function editText(){
   const teks = prompt("Edit Running Text:", document.getElementById("runningText").innerText);
   if(teks){
@@ -175,8 +197,64 @@ window.onload=function(){
   if(saved){
     document.getElementById("runningText").innerText = saved;
   }
-  buatPanel();
+  loadHijriyah();
 }
+
+/* MODE GELAP */
+function toggleMode(){
+  document.body.classList.toggle("dark-mode");
+  const btn=document.getElementById("modeBtn");
+  btn.innerText=document.body.classList.contains("dark-mode")?
+  "☀ Mode Terang":"🌙 Mode Gelap";
+}
+
+/* NOTIFIKASI */
+function aktifkanNotifikasi(){
+  if(Notification.permission!=="granted"){
+    Notification.requestPermission();
+  }
+  alert("Notifikasi Aktif ✅");
+}
+
+/* TANGGAL HIJRIYAH */
+async function loadHijriyah(){
+  const today=new Date();
+  const url=`https://api.aladhan.com/v1/gToH?date=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`;
+  const res=await fetch(url);
+  const data=await res.json();
+  const h=data.data.hijri;
+  document.getElementById("hijriyah").innerText=
+  "📅 "+h.day+" "+h.month.en+" "+h.year+" H";
+}
+
+/* HEADER WARNA BERUBAH */
+const colors=["#0ea5e9","#16a34a","#f97316","#a855f7"];
+setInterval(()=>{
+  document.querySelector("header").style.background=
+  colors[Math.floor(Math.random()*colors.length)];
+},10000);
+
+/* ANIMASI BINTANG */
+function buatBintang(){
+  const star=document.createElement("div");
+  star.innerHTML="✨";
+  star.style.position="fixed";
+  star.style.left=Math.random()*100+"%";
+  star.style.top="-20px";
+  star.style.fontSize="20px";
+  star.style.animation="jatuh 5s linear";
+  document.body.appendChild(star);
+  setTimeout(()=>star.remove(),5000);
+}
+setInterval(buatBintang,800);
+
+const style=document.createElement("style");
+style.innerHTML=`
+@keyframes jatuh{
+  to{ transform:translateY(100vh); opacity:0; }
+}`;
+document.head.appendChild(style);
+
 </script>
 
 </body>
