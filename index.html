@@ -319,6 +319,11 @@ function playAudio(){
     alert("Browser memblokir audio. Tekan sekali lagi.");
   });
 }
+function stopAudio(){
+  const audio = document.getElementById("audioAyat");
+  audio.pause();        // berhenti
+  audio.currentTime = 0; // kembali ke awal
+}
 /* ===============================
    AUTO SCROLL ARAB
 ================================ */
