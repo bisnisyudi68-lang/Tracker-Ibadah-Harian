@@ -183,8 +183,7 @@ position:relative;
 <button onclick="playAudio()">▶ Play Audio</button>
 <button onclick="loadAyatRandom()">🔄 Ayat Lain</button>
 
-<audio id="audioAyat"></audio>
-
+<audio id="audioAyat" preload="auto"></audio>
 </div>
 
 <div class="grid">
@@ -273,14 +272,23 @@ async function loadAyatRandom(){
 function setAudio(){
 
   const audioUrl =
-  `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
+  `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${currentAyatNumber}.mp3`;
 
-  document.getElementById("audioAyat").src = audioUrl;
+  const audio = document.getElementById("audioAyat");
 
-  // Debug kalau audio gagal
-  document.getElementById("audioAyat").onerror = function(){
-    alert("Audio tidak tersedia untuk qori ini.");
-  };
+  audio.src = audioUrl;
+  audio.load();   // WAJIB supaya file benar-benar dimuat
+}
+
+function playAudio(){
+
+  const audio = document.getElementById("audioAyat");
+
+  audio.play()
+  .then(()=>{})
+  .catch(err=>{
+    alert("Browser memblokir audio. Tekan sekali lagi.");
+  });
 }
 /* ===============================
    AUTO SCROLL ARAB
