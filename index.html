@@ -231,9 +231,16 @@ class="wa-btn">
 </footer>
 
 <script>
+
+/* ===============================
+   GLOBAL VAR
+================================ */
 let currentAyatNumber = 1;
 let currentQori = "ar.alafasy";
 
+/* ===============================
+   LOAD AYAT RANDOM
+================================ */
 async function loadAyatRandom(){
 
   const totalAyat = 6236;
@@ -242,17 +249,12 @@ async function loadAyatRandom(){
 
   try{
     const res = await fetch(
-      `https://api.quran.com/api/v4/verses/by_key/${randomAyat}?language=id&fields=text_uthmani`
-    );
-
-    if(!res.ok) throw new Error("API error");
-
-    // fallback tetap pakai alquran.cloud (lebih aman)
-    const backup = await fetch(
       `https://api.alquran.cloud/v1/ayah/${randomAyat}/editions/quran-uthmani,id.indonesian`
     );
 
-    const data = await backup.json();
+    if(!res.ok) throw new Error("Network error");
+
+    const data = await res.json();
 
     const arab = data.data[0];
     const indo = data.data[1];
@@ -265,15 +267,19 @@ async function loadAyatRandom(){
     setAudio();
     autoScrollArab();
 
-  }catch(err){
+  }catch(error){
     document.getElementById("arab").innerText = "Periksa koneksi internet.";
     document.getElementById("arti").innerText = "";
     document.getElementById("surah").innerText = "";
   }
 }
+
+/* ===============================
+   AUDIO
+================================ */
 function setAudio(){
   const audioUrl =
-  `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
+    `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
 
   document.getElementById("audioAyat").src = audioUrl;
 }
@@ -286,77 +292,140 @@ function updateQori(){
 function playAudio(){
   document.getElementById("audioAyat").play();
 }
-/* EDIT RUNNING TEXT */
+
+/* ===============================
+   AUTO SCROLL ARAB
+================================ */
+function autoScrollArab(){
+
+  const container = document.getElementById("arabContainer");
+
+  container.scrollTop = 0;
+
+  setTimeout(()=>{
+    if(container.scrollHeight > container.clientHeight){
+
+      let posisi = 0;
+
+      const scrollInterval = setInterval(()=>{
+        posisi++;
+        container.scrollTop = posisi;
+
+        if(posisi >= container.scrollHeight - container.clientHeight){
+          clearInterval(scrollInterval);
+        }
+
+      }, 40);
+    }
+  }, 1000);
+}
+
+/* ===============================
+   EDIT RUNNING TEXT
+================================ */
 function editText(){
-  const teks = prompt("Edit Running Text:", document.getElementById("runningText").innerText);
+  const teks = prompt(
+    "Edit Running Text:",
+    document.getElementById("runningText").innerText
+  );
+
   if(teks){
     document.getElementById("runningText").innerText = teks;
     localStorage.setItem("runningText", teks);
   }
 }
 
-window.onload=function(){
-  const saved = localStorage.getItem("runningText");
-  if(saved){
-    document.getElementById("runningText").innerText = saved;
-  }
-  loadHijriyah();
-}
-
-/* MODE GELAP */
-function toggleMode(){
-  document.body.classList.toggle("dark-mode");
-  const btn=document.getElementById("modeBtn");
-  btn.innerText=document.body.classList.contains("dark-mode")?
-  "☀ Mode Terang":"🌙 Mode Gelap";
-}
-
-/* NOTIFIKASI */
+/* ===============================
+   NOTIFIKASI
+================================ */
 function aktifkanNotifikasi(){
-  if(Notification.permission!=="granted"){
+  if(Notification.permission !== "granted"){
     Notification.requestPermission();
   }
   alert("Notifikasi Aktif ✅");
 }
 
-/* TANGGAL HIJRIYAH */
+/* ===============================
+   TANGGAL HIJRIYAH
+================================ */
 async function loadHijriyah(){
-  const today=new Date();
-  const url=`https://api.aladhan.com/v1/gToH?date=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`;
-  const res=await fetch(url);
-  const data=await res.json();
-  const h=data.data.hijri;
-  document.getElementById("hijriyah").innerText=
-  "📅 "+h.day+" "+h.month.en+" "+h.year+" H";
+  const today = new Date();
+  const url =
+  `https://api.aladhan.com/v1/gToH?date=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+  const h = data.data.hijri;
+
+  document.getElementById("hijriyah").innerText =
+    "📅 " + h.day + " " + h.month.en + " " + h.year + " H";
 }
 
-/* HEADER WARNA BERUBAH */
-const colors=["#0ea5e9","#16a34a","#f97316","#a855f7"];
+/* ===============================
+   MODE GELAP
+================================ */
+function toggleMode(){
+  document.body.classList.toggle("dark-mode");
+
+  const btn = document.getElementById("modeBtn");
+
+  btn.innerText =
+    document.body.classList.contains("dark-mode")
+    ? "☀ Mode Terang"
+    : "🌙 Mode Gelap";
+}
+
+/* ===============================
+   HEADER WARNA BERUBAH
+================================ */
+const colors = ["#0ea5e9","#16a34a","#f97316","#a855f7"];
+
 setInterval(()=>{
-  document.querySelector("header").style.background=
-  colors[Math.floor(Math.random()*colors.length)];
+  document.querySelector("header").style.background =
+    colors[Math.floor(Math.random()*colors.length)];
 },10000);
 
-/* ANIMASI BINTANG */
+/* ===============================
+   ANIMASI BINTANG
+================================ */
 function buatBintang(){
-  const star=document.createElement("div");
-  star.innerHTML="✨";
-  star.style.position="fixed";
-  star.style.left=Math.random()*100+"%";
-  star.style.top="-20px";
-  star.style.fontSize="20px";
-  star.style.animation="jatuh 5s linear";
+  const star = document.createElement("div");
+  star.innerHTML = "✨";
+  star.style.position = "fixed";
+  star.style.left = Math.random()*100 + "%";
+  star.style.top = "-20px";
+  star.style.fontSize = "20px";
+  star.style.animation = "jatuh 5s linear";
   document.body.appendChild(star);
+
   setTimeout(()=>star.remove(),5000);
 }
+
 setInterval(buatBintang,800);
 
-const style=document.createElement("style");
-style.innerHTML=`
+const style = document.createElement("style");
+style.innerHTML = `
 @keyframes jatuh{
-  to{ transform:translateY(100vh); opacity:0; }
+  to{
+    transform:translateY(100vh);
+    opacity:0;
+  }
 }`;
 document.head.appendChild(style);
+
+/* ===============================
+   INIT
+================================ */
+window.onload = function(){
+
+  const saved = localStorage.getItem("runningText");
+  if(saved){
+    document.getElementById("runningText").innerText = saved;
+  }
+
+  loadHijriyah();
+  loadAyatRandom();
+};
 
 </script>
 
