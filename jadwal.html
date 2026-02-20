@@ -2,108 +2,213 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Sholat Majalengka</title>
+<title>Masjid Digital Pro</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
+  font-family:Arial, sans-serif;
+  background:linear-gradient(to bottom,#0f172a,#020617);
   color:white;
   text-align:center;
+  overflow:hidden;
 }
 
-header{
-  padding:20px;
-  font-size:22px;
+.jam{
+  font-size:90px;
   font-weight:bold;
-  background:#111827;
+  margin-top:20px;
+  color:#22d3ee;
+}
+
+.tanggal{
+  font-size:22px;
+  margin-bottom:10px;
 }
 
 .container{
-  max-width:500px;
-  margin:30px auto;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:20px;
   padding:20px;
 }
 
 .card{
   background:#1e293b;
-  padding:20px;
-  border-radius:15px;
-  margin-top:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  padding:25px;
+  border-radius:20px;
+  width:200px;
+  font-size:24px;
+  transition:0.3s;
 }
 
-.time{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+.active{
+  background:#16a34a;
+  transform:scale(1.08);
 }
 
-.footer{
-  margin-top:40px;
-  font-size:12px;
-  opacity:0.6;
+.countdown{
+  font-size:32px;
+  margin-top:10px;
+  color:#facc15;
+}
+
+.running-text{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#111827;
+  padding:10px 0;
+  font-size:20px;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+.running-text span{
+  display:inline-block;
+  padding-left:100%;
+  animation:marquee 20s linear infinite;
+}
+
+@keyframes marquee{
+  0%{ transform:translateX(0);}
+  100%{ transform:translateX(-100%);}
+}
+
+button{
+  margin-top:10px;
+  padding:12px 25px;
+  border-radius:12px;
+  border:none;
+  font-size:18px;
+  background:#ef4444;
+  color:white;
+  cursor:pointer;
 }
 </style>
 </head>
 
-<body>
+<body onclick="goFullscreen()">
 
-<header>🕰 Jadwal Sholat Majalengka</header>
+<div class="jam" id="jam"></div>
+<div class="tanggal" id="tanggal"></div>
 
-<div class="container">
+<div class="container" id="jadwal"></div>
 
-<div id="result">
-  Menampilkan jadwal...
-</div>
+<div class="countdown" id="countdown"></div>
 
-</div>
+<button onclick="aktifkanAlarm()">🔔 Aktifkan Alarm</button>
 
-<div class="footer">
-Muslim Pro Lite © 2026
+<audio id="adzanAudio" src="https://www.islamcan.com/audio/adhan/azan1.mp3"></audio>
+
+<div class="running-text">
+  <span id="runningText">🌐 Selamat Datang di Website A Yudi Thea — Semoga Bermanfaat untuk Kita Semua 🌐</span>
 </div>
 
 <script>
+let jadwal = {};
+let alarmAktif = false;
+let sudahBunyi = {};
 
-function getPrayerTimes(lat, lon){
-  const today = new Date();
-  const date = today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+function updateJam(){
+  const now = new Date();
+  document.getElementById("jam").innerHTML = now.toLocaleTimeString('id-ID');
+  document.getElementById("tanggal").innerHTML =
+    now.toLocaleDateString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+setInterval(updateJam,1000);
+updateJam();
 
-  fetch(`https://api.aladhan.com/v1/timings/${date}?latitude=${lat}&longitude=${lon}&method=11`)
-  .then(res => res.json())
-  .then(data => {
-    const t = data.data.timings;
-
-    document.getElementById("result").innerHTML = `
-      <div class="card">
-        <div class="time"><span>Subuh</span><span>${t.Fajr}</span></div>
-        <div class="time"><span>Dzuhur</span><span>${t.Dhuhr}</span></div>
-        <div class="time"><span>Ashar</span><span>${t.Asr}</span></div>
-        <div class="time"><span>Maghrib</span><span>${t.Maghrib}</span></div>
-        <div class="time"><span>Isya</span><span>${t.Isha}</span></div>
-      </div>
-    `;
-  });
+function loadJadwal(lat,lon){
+ fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=11`)
+ .then(res=>res.json())
+ .then(data=>{
+   const t=data.data.timings;
+   jadwal={
+     Subuh:t.Fajr,
+     Dzuhur:t.Dhuhr,
+     Ashar:t.Asr,
+     Maghrib:t.Maghrib,
+     Isya:t.Isha
+   };
+   tampilkanJadwal();
+ });
 }
 
-// Coba ambil GPS
-if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(
-    (position)=>{
-      getPrayerTimes(position.coords.latitude, position.coords.longitude);
-    },
-    ()=>{
-      // Jika gagal, default Majalengka
-      getPrayerTimes(-6.83,108.23);
-    }
-  );
-}else{
-  getPrayerTimes(-6.83,108.23);
+function tampilkanJadwal(){
+ const container=document.getElementById("jadwal");
+ container.innerHTML="";
+ for(let nama in jadwal){
+   container.innerHTML+=`
+   <div class="card" id="${nama}">
+     <div>${nama}</div>
+     <div>${jadwal[nama]}</div>
+   </div>`;
+ }
 }
 
+function cekWaktu(){
+ const now=new Date();
+ const jamSekarang=now.toTimeString().slice(0,5);
+ let waktuBerikut=null;
+
+ for(let nama in jadwal){
+
+   if(jamSekarang===jadwal[nama] && !sudahBunyi[nama]){
+     if(alarmAktif){
+       document.getElementById("adzanAudio").play();
+     }
+     sudahBunyi[nama]=true;
+   }
+
+   if(jamSekarang < jadwal[nama] && !waktuBerikut){
+     waktuBerikut={nama,waktu:jadwal[nama]};
+   }
+
+   const card=document.getElementById(nama);
+   if(card){
+     if(jamSekarang>=jadwal[nama]){
+       card.classList.add("active");
+     }else{
+       card.classList.remove("active");
+     }
+   }
+ }
+
+ if(waktuBerikut){
+   const target=new Date();
+   const [h,m]=waktuBerikut.waktu.split(":");
+   target.setHours(h,m,0);
+
+   const diff=target-now;
+   const hh=Math.floor(diff/3600000);
+   const mm=Math.floor((diff%3600000)/60000);
+   const ss=Math.floor((diff%60000)/1000);
+
+   document.getElementById("countdown").innerHTML=
+   "Menuju "+waktuBerikut.nama+" : "+
+   String(hh).padStart(2,'0')+":"+
+   String(mm).padStart(2,'0')+":"+
+   String(ss).padStart(2,'0');
+ }
+}
+setInterval(cekWaktu,1000);
+
+function aktifkanAlarm(){
+ alarmAktif=true;
+ alert("Alarm Aktif ✅");
+}
+
+function goFullscreen(){
+ if(document.documentElement.requestFullscreen){
+   document.documentElement.requestFullscreen();
+ }
+}
+
+navigator.geolocation.getCurrentPosition(pos=>{
+ loadJadwal(pos.coords.latitude,pos.coords.longitude);
+});
 </script>
 
 </body>
