@@ -310,14 +310,9 @@ function setAudio(){
 }
 
 function playAudio(){
-
   const audio = document.getElementById("audioAyat");
 
-  audio.play()
-  .then(()=>{})
-  .catch(err=>{
-    alert("Browser memblokir audio. Tekan sekali lagi.");
-  });
+  audio.play();
 }
 function stopAudio(){
   const audio = document.getElementById("audioAyat");
