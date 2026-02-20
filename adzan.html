@@ -46,38 +46,62 @@
 </div>
 
 <script>
-  function tampilkanJadwal(lat, lon) {
-    fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=11`)
-      .then(res => res.json())
-      .then(data => {
-        const t = data.data.timings;
-        document.getElementById("jadwal").innerHTML = `
-          <p>Subuh: ${t.Fajr}</p>
-          <p>Dzuhur: ${t.Dhuhr}</p>
-          <p>Ashar: ${t.Asr}</p>
-          <p>Maghrib: ${t.Maghrib}</p>
-          <p>Isya: ${t.Isha}</p>
-        `;
-      });
-  }
+let jadwalSholat = {};
+let alarmAktif = false;
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
+function tampilkanJadwal(lat, lon) {
+  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=11`)
+    .then(res => res.json())
+    .then(data => {
+      const t = data.data.timings;
 
-      document.getElementById("lokasi").innerHTML =
-        `Lat: ${lat.toFixed(4)} | Lon: ${lon.toFixed(4)}`;
+      jadwalSholat = {
+        Fajr: t.Fajr,
+        Dhuhr: t.Dhuhr,
+        Asr: t.Asr,
+        Maghrib: t.Maghrib,
+        Isha: t.Isha
+      };
 
-      tampilkanJadwal(lat, lon);
-    }, function() {
-      document.getElementById("lokasi").innerHTML =
-        "Izin lokasi ditolak.";
+      document.getElementById("jadwal").innerHTML = `
+        <p>Subuh: ${t.Fajr}</p>
+        <p>Dzuhur: ${t.Dhuhr}</p>
+        <p>Ashar: ${t.Asr}</p>
+        <p>Maghrib: ${t.Maghrib}</p>
+        <p>Isya: ${t.Isha}</p>
+      `;
     });
-  } else {
-    document.getElementById("lokasi").innerHTML =
-      "Browser tidak mendukung GPS.";
+}
+
+function cekWaktuSholat() {
+  if (!alarmAktif) return;
+
+  const sekarang = new Date();
+  const jam = sekarang.getHours().toString().padStart(2, '0');
+  const menit = sekarang.getMinutes().toString().padStart(2, '0');
+  const waktuSekarang = `${jam}:${menit}`;
+
+  for (let key in jadwalSholat) {
+    if (jadwalSholat[key] === waktuSekarang) {
+      document.getElementById("adzanAudio").play();
+    }
   }
+}
+
+setInterval(cekWaktuSholat, 60000); // cek tiap 1 menit
+
+function aktifkanAlarm() {
+  alarmAktif = true;
+  alert("Alarm Adzan Aktif ✅");
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    tampilkanJadwal(lat, lon);
+  });
+}
 </script>
 
 </body>
