@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Muslim Pro Lite</title>
 
 <style>
-
 body{
   margin:0;
   font-family:Arial, sans-serif;
@@ -14,6 +13,7 @@ body{
   color:white;
 }
 
+/* HEADER */
 header{
   text-align:center;
   padding:25px;
@@ -23,6 +23,28 @@ header{
   box-shadow:0 4px 15px rgba(0,0,0,0.4);
 }
 
+/* RUNNING TEXT */
+.running-text{
+  width:100%;
+  background:#0ea5e9;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.running-text span{
+  display:inline-block;
+  padding:10px 0;
+  padding-left:100%;
+  animation:marquee 15s linear infinite;
+  font-weight:bold;
+}
+
+@keyframes marquee{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-100%); }
+}
+
+/* GRID MENU */
 .grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -44,24 +66,18 @@ header{
   transition:0.3s;
 }
 
-.menu:hover{
-  transform:scale(1.05);
-  background:#2563eb;
-}
-
 .menu span{
   display:block;
   font-size:30px;
   margin-bottom:10px;
 }
 
-footer{
-  text-align:center;
-  padding:20px;
-  font-size:13px;
-  opacity:0.6;
+.menu:hover{
+  transform:scale(1.05);
+  background:#2563eb;
 }
 
+/* WA BUTTON */
 .wa-btn{
   display:block;
   text-align:center;
@@ -77,24 +93,33 @@ footer{
   box-shadow:0 8px 20px rgba(37,211,102,0.4);
 }
 
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+  opacity:0.7;
+}
 </style>
 </head>
+
+<body>
 
 <header>
 🕌 Muslim Pro Lite
 </header>
+
 <div class="running-text">
-  <span id="runningText">🌐 Selamat Datang di Website A Yudi Thea — Semoga Bermanfaat untuk Kita Semua 🌐</span>
+  <span id="runningText">
+  🌐 Selamat Datang di Website A Yudi Thea — Semoga Bermanfaat untuk Kita Semua 🌐
+  </span>
 </div>
-
-<body>
-
 
 <div class="grid">
 
 <a href="quran.html" class="menu">
 <span>📖</span>
-Al-Quran
+Al-Qur'an
 </a>
 
 <a href="juz30.html" class="menu">
@@ -107,17 +132,52 @@ Murotal Juz 30
 Jadwal Adzan
 </a>
 
-<div>
+<a href="https://wa.me/6282319264646?text=Halo%20Admin,%20Saya%20ingin%20request%20fitur%20baru"
+target="_blank"
+class="menu">
+<span>💬</span>
+Request Fitur
+</a>
 
-<a href="https://wa.me/6282319264646?text=Halo%20Admin,%20saya%20ingin%20request%20fitur%20baru"
+</div>
+
+<a href="https://wa.me/6282319264646"
 target="_blank"
 class="wa-btn">
-💬 Request Fitur via WhatsApp
+💬 Hubungi Admin via WhatsApp
 </a>
 
 <footer>
 © 2026 Muslim Pro Lite
 </footer>
+
+<script>
+/* PANEL EDIT RUNNING TEXT */
+function buatPanel(){
+  const panel = document.createElement("div");
+  panel.style.position="fixed";
+  panel.style.top="10px";
+  panel.style.right="10px";
+  panel.innerHTML=`<button onclick="editText()" style="padding:8px 15px;background:#ef4444;color:white;border:none;border-radius:8px;">⚙ Edit</button>`;
+  document.body.appendChild(panel);
+}
+
+function editText(){
+  const teks = prompt("Edit Running Text:", document.getElementById("runningText").innerText);
+  if(teks){
+    document.getElementById("runningText").innerText = teks;
+    localStorage.setItem("runningText", teks);
+  }
+}
+
+window.onload=function(){
+  const saved = localStorage.getItem("runningText");
+  if(saved){
+    document.getElementById("runningText").innerText = saved;
+  }
+  buatPanel();
+}
+</script>
 
 </body>
 </html>
