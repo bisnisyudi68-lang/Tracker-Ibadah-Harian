@@ -122,6 +122,32 @@ footer{
   font-size:13px;
   opacity:0.7;
 }
+/* ===== CARD AYAT PREMIUM ===== */
+.card-ayat{
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+
+/* ===== TOMBOL HALUS ===== */
+button{
+  transition: all 0.3s ease;
+}
+
+button:active{
+  transform: scale(0.95);
+}
+
+/* ===== DROPDOWN MODERN ===== */
+select{
+  padding:10px 15px;
+  border-radius:10px;
+  border:none;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -156,9 +182,11 @@ text-align:center;
 overflow:hidden;
 ">
 
+<div class="card-ayat">
+
 <h3>📖 Ayat Hari Ini</h3>
 
-<div id="arabContainer" style="
+<div id="arabContainer"> style="
 max-height:120px;
 overflow:hidden;
 position:relative;
