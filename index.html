@@ -145,6 +145,24 @@ footer{
 
 <div id="hijriyah" style="text-align:center;margin-top:10px;font-weight:bold;"></div>
 
+<div id="ayatRandom" style="
+max-width:800px;
+margin:20px auto;
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+text-align:center;
+">
+
+<h3>📖 Ayat Hari Ini</h3>
+<div id="arab" style="font-size:26px;margin:15px 0;line-height:1.8;"></div>
+<div id="arti" style="font-size:16px;opacity:0.9;"></div>
+<div id="surah" style="margin-top:10px;font-weight:bold;"></div>
+
+<button onclick="loadAyatRandom()">🔄 Ayat Lain</button>
+</div>
+
 <div class="grid">
 
 <a href="quran.html" class="menu">
@@ -182,6 +200,32 @@ class="wa-btn">
 </footer>
 
 <script>
+async function loadAyatRandom(){
+
+  const totalAyat = 6236;
+  const randomAyat = Math.floor(Math.random() * totalAyat) + 1;
+
+  try{
+    const res = await fetch(
+      `https://api.alquran.cloud/v1/ayah/${randomAyat}/editions/quran-uthmani,id.indonesian`
+    );
+
+    const data = await res.json();
+
+    const arab = data.data[0];
+    const indo = data.data[1];
+
+    document.getElementById("arab").innerText = arab.text;
+    document.getElementById("arti").innerText = indo.text;
+    document.getElementById("surah").innerText =
+      arab.surah.englishName + " : " + arab.numberInSurah;
+
+  }catch(err){
+    document.getElementById("arab").innerText = "Gagal memuat ayat.";
+  }
+}
+
+loadAyatRandom();
 
 /* EDIT RUNNING TEXT */
 function editText(){
