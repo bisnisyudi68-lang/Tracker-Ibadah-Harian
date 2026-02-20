@@ -242,10 +242,17 @@ async function loadAyatRandom(){
 
   try{
     const res = await fetch(
+      `https://api.quran.com/api/v4/verses/by_key/${randomAyat}?language=id&fields=text_uthmani`
+    );
+
+    if(!res.ok) throw new Error("API error");
+
+    // fallback tetap pakai alquran.cloud (lebih aman)
+    const backup = await fetch(
       `https://api.alquran.cloud/v1/ayah/${randomAyat}/editions/quran-uthmani,id.indonesian`
     );
 
-    const data = await res.json();
+    const data = await backup.json();
 
     const arab = data.data[0];
     const indo = data.data[1];
@@ -259,10 +266,11 @@ async function loadAyatRandom(){
     autoScrollArab();
 
   }catch(err){
-    document.getElementById("arab").innerText = "Gagal memuat ayat.";
+    document.getElementById("arab").innerText = "Periksa koneksi internet.";
+    document.getElementById("arti").innerText = "";
+    document.getElementById("surah").innerText = "";
   }
 }
-
 function setAudio(){
   const audioUrl =
   `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
