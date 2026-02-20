@@ -184,36 +184,36 @@ overflow:hidden;
 
 <div class="card-ayat">
 
-<h3>📖 Ayat Hari Ini</h3>
+<h3>📖 Ayat Hari Ini ✨</h3>
 
-<div id="arabContainer"style="
-max-height:120px;
-overflow:hidden;
-position:relative;
-">
+<div id="arabContainer" style="max-height:120px; overflow:hidden; position:relative;">
 
-<div id="arab" style="
-font-size:26px;
-line-height:1.8;
-position:relative;
-"></div>
+    <div id="arab" style="
+    font-size:26px;
+    line-height:1.8;
+    position:relative;
+    ">
+    </div>
 
 </div>
 
-<div id="arti" style="font-size:16px;margin-top:15px;opacity:0.9;"></div>
-<div id="surah" style="margin-top:10px;font-weight:bold;"></div>
+<div id="arti" style="font-size:16px; margin-top:15px; opacity:0.9;"></div>
+
+<div id="surah" style="margin-top:10px; font-weight:bold;"></div>
 
 <br>
+
 <select id="pilihQori" onchange="updateQori()">
-<option value="ar.alafasy">Mishary Alafasy</option>
-<option value="ar.mahermuaiqly">Maher Al-Muaiqly</option>
+    <option value="ar.alafasy">Mishary Alafasy</option>
+    <option value="ar.mahermuaiqly">Maher Al-Muaiqly</option>
 </select>
+
 <button onclick="playAudio()">▶ Play Audio</button>
 <button onclick="loadAyatRandom()">🔄 Ayat Lain</button>
 
 <audio id="audioAyat" preload="auto"></audio>
-</div>
 
+</div>
 <div class="grid">
 
 <a href="quran.html" class="menu">
