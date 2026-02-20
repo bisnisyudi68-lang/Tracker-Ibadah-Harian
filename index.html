@@ -176,7 +176,17 @@ position:relative;
 <div id="surah" style="margin-top:10px;font-weight:bold;"></div>
 
 <br>
-
+<select id="pilihQori" onchange="updateQori()" style="
+padding:8px;
+border-radius:8px;
+margin-bottom:10px;
+">
+<option value="ar.alafasy">Mishary Alafasy</option>
+<option value="ar.abdulbasitmurattal">Abdul Basit</option>
+<option value="ar.sudais">Abdurrahman As-Sudais</option>
+<option value="ar.hanirifai">Hani Rifai</option>
+<option value="ar.mahermuaiqly">Maher Al-Muaiqly</option>
+</select>
 <button onclick="playAudio()">▶ Play Audio</button>
 <button onclick="loadAyatRandom()">🔄 Ayat Lain</button>
 
@@ -221,12 +231,14 @@ class="wa-btn">
 </footer>
 
 <script>
-let currentAudio = "";
+let currentAyatNumber = 1;
+let currentQori = "ar.alafasy";
 
 async function loadAyatRandom(){
 
   const totalAyat = 6236;
   const randomAyat = Math.floor(Math.random() * totalAyat) + 1;
+  currentAyatNumber = randomAyat;
 
   try{
     const res = await fetch(
@@ -243,12 +255,7 @@ async function loadAyatRandom(){
     document.getElementById("surah").innerText =
       arab.surah.englishName + " : " + arab.numberInSurah;
 
-    // set audio (Mishary Alafasy)
-    currentAudio =
-      `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${arab.number}.mp3`;
-
-    document.getElementById("audioAyat").src = currentAudio;
-
+    setAudio();
     autoScrollArab();
 
   }catch(err){
@@ -256,35 +263,21 @@ async function loadAyatRandom(){
   }
 }
 
+function setAudio(){
+  const audioUrl =
+  `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
+
+  document.getElementById("audioAyat").src = audioUrl;
+}
+
+function updateQori(){
+  currentQori = document.getElementById("pilihQori").value;
+  setAudio();
+}
+
 function playAudio(){
   document.getElementById("audioAyat").play();
 }
-
-function autoScrollArab(){
-  const container = document.getElementById("arabContainer");
-  const text = document.getElementById("arab");
-
-  container.scrollTop = 0;
-
-  setTimeout(()=>{
-    const scrollHeight = text.scrollHeight;
-    const containerHeight = container.clientHeight;
-
-    if(scrollHeight > containerHeight){
-      let posisi = 0;
-      const interval = setInterval(()=>{
-        posisi++;
-        container.scrollTop = posisi;
-
-        if(posisi >= scrollHeight - containerHeight){
-          clearInterval(interval);
-        }
-      }, 50);
-    }
-  },1000);
-}
-
-loadAyatRandom();
 /* EDIT RUNNING TEXT */
 function editText(){
   const teks = prompt("Edit Running Text:", document.getElementById("runningText").innerText);
