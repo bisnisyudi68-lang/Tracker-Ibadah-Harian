@@ -176,15 +176,8 @@ position:relative;
 <div id="surah" style="margin-top:10px;font-weight:bold;"></div>
 
 <br>
-<select id="pilihQori" onchange="updateQori()" style="
-padding:8px;
-border-radius:8px;
-margin-bottom:10px;
-">
+<select id="pilihQori" onchange="updateQori()">
 <option value="ar.alafasy">Mishary Alafasy</option>
-<option value="ar.abdulbasitmurattal">Abdul Basit</option>
-<option value="ar.sudais">Abdurrahman As-Sudais</option>
-<option value="ar.hanirifai">Hani Rifai</option>
 <option value="ar.mahermuaiqly">Maher Al-Muaiqly</option>
 </select>
 <button onclick="playAudio()">▶ Play Audio</button>
@@ -280,22 +273,14 @@ async function loadAyatRandom(){
 function setAudio(){
 
   const audioUrl =
-  `https://everyayah.com/data/${getFolderName()}/${String(currentAyatNumber).padStart(6,'0')}.mp3`;
+  `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
 
   document.getElementById("audioAyat").src = audioUrl;
-}
 
-function getFolderName(){
-
-  const map = {
-    "ar.alafasy": "Alafasy_128kbps",
-    "ar.abdulbasitmurattal": "Abdul_Basit_Murattal_128kbps",
-    "ar.sudais": "Abdurrahmaan_As-Sudais_128kbps",
-    "ar.hanirifai": "Hani_Rifai_192kbps",
-    "ar.mahermuaiqly": "Maher_AlMuaiqly_128kbps"
+  // Debug kalau audio gagal
+  document.getElementById("audioAyat").onerror = function(){
+    alert("Audio tidak tersedia untuk qori ini.");
   };
-
-  return map[currentQori];
 }
 /* ===============================
    AUTO SCROLL ARAB
