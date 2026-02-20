@@ -278,21 +278,25 @@ async function loadAyatRandom(){
    AUDIO
 ================================ */
 function setAudio(){
+
   const audioUrl =
-    `https://cdn.islamic.network/quran/audio/128/${currentQori}/${currentAyatNumber}.mp3`;
+  `https://everyayah.com/data/${getFolderName()}/${String(currentAyatNumber).padStart(6,'0')}.mp3`;
 
   document.getElementById("audioAyat").src = audioUrl;
 }
 
-function updateQori(){
-  currentQori = document.getElementById("pilihQori").value;
-  setAudio();
-}
+function getFolderName(){
 
-function playAudio(){
-  document.getElementById("audioAyat").play();
-}
+  const map = {
+    "ar.alafasy": "Alafasy_128kbps",
+    "ar.abdulbasitmurattal": "Abdul_Basit_Murattal_128kbps",
+    "ar.sudais": "Abdurrahmaan_As-Sudais_128kbps",
+    "ar.hanirifai": "Hani_Rifai_192kbps",
+    "ar.mahermuaiqly": "Maher_AlMuaiqly_128kbps"
+  };
 
+  return map[currentQori];
+}
 /* ===============================
    AUTO SCROLL ARAB
 ================================ */
