@@ -153,14 +153,35 @@ padding:20px;
 border-radius:15px;
 box-shadow:0 10px 25px rgba(0,0,0,0.4);
 text-align:center;
+overflow:hidden;
 ">
 
 <h3>📖 Ayat Hari Ini</h3>
-<div id="arab" style="font-size:26px;margin:15px 0;line-height:1.8;"></div>
-<div id="arti" style="font-size:16px;opacity:0.9;"></div>
+
+<div id="arabContainer" style="
+max-height:120px;
+overflow:hidden;
+position:relative;
+">
+
+<div id="arab" style="
+font-size:26px;
+line-height:1.8;
+position:relative;
+"></div>
+
+</div>
+
+<div id="arti" style="font-size:16px;margin-top:15px;opacity:0.9;"></div>
 <div id="surah" style="margin-top:10px;font-weight:bold;"></div>
 
+<br>
+
+<button onclick="playAudio()">▶ Play Audio</button>
 <button onclick="loadAyatRandom()">🔄 Ayat Lain</button>
+
+<audio id="audioAyat"></audio>
+
 </div>
 
 <div class="grid">
@@ -200,6 +221,8 @@ class="wa-btn">
 </footer>
 
 <script>
+let currentAudio = "";
+
 async function loadAyatRandom(){
 
   const totalAyat = 6236;
@@ -220,13 +243,48 @@ async function loadAyatRandom(){
     document.getElementById("surah").innerText =
       arab.surah.englishName + " : " + arab.numberInSurah;
 
+    // set audio (Mishary Alafasy)
+    currentAudio =
+      `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${arab.number}.mp3`;
+
+    document.getElementById("audioAyat").src = currentAudio;
+
+    autoScrollArab();
+
   }catch(err){
     document.getElementById("arab").innerText = "Gagal memuat ayat.";
   }
 }
 
-loadAyatRandom();
+function playAudio(){
+  document.getElementById("audioAyat").play();
+}
 
+function autoScrollArab(){
+  const container = document.getElementById("arabContainer");
+  const text = document.getElementById("arab");
+
+  container.scrollTop = 0;
+
+  setTimeout(()=>{
+    const scrollHeight = text.scrollHeight;
+    const containerHeight = container.clientHeight;
+
+    if(scrollHeight > containerHeight){
+      let posisi = 0;
+      const interval = setInterval(()=>{
+        posisi++;
+        container.scrollTop = posisi;
+
+        if(posisi >= scrollHeight - containerHeight){
+          clearInterval(interval);
+        }
+      }, 50);
+    }
+  },1000);
+}
+
+loadAyatRandom();
 /* EDIT RUNNING TEXT */
 function editText(){
   const teks = prompt("Edit Running Text:", document.getElementById("runningText").innerText);
